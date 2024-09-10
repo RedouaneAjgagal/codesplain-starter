@@ -10,7 +10,9 @@ const renderComponent = () => {
         full_name: "facebook/react",
         language: "JavaScript",
         description: "A JavaScript library",
-        owner: "Facebok",
+        owner: {
+            login: "Facebok"
+        },
         name: "React",
         html_url: "https://github.com/facebook/react"
     };
@@ -52,6 +54,20 @@ test('should have dynamic icon based on the repository primary language', async 
     });
 
     expect(icon).toHaveClass("js-icon");
+});
+
+test("should link to the code editor page", async () => {
+    const { repository } = renderComponent();
+
+    await screen.findByRole("img", {
+        name: new RegExp(repository.language, "i")
+    });
+
+    const codeEditorLink = screen.getByRole("link", {
+        name: new RegExp(repository.owner.login)
+    });
+
+    expect(codeEditorLink).toHaveAttribute("href", `/repositories/${repository.full_name}`);
 });
 
 // const pause = () => new Promise(resolve => setTimeout(resolve, 100));
