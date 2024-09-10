@@ -5,7 +5,7 @@ import { MemoryRouter } from "react-router-dom";
 
 // jest.mock("../tree/FileIcon.js", () => () => "File Icon Component");
 
-test('should have github repository link', async () => {
+const renderComponent = () => {
     const repository = {
         full_name: "facebook/react",
         language: "JavaScript",
@@ -21,12 +21,19 @@ test('should have github repository link', async () => {
         </MemoryRouter>
     )
 
+    return {
+        repository
+    }
+}
+
+test('should have github repository link', async () => {
+    const { repository } = renderComponent();
     // await act(async () => {
     //     await pause();
     // });
-    
+
     await screen.findByRole("img", {
-        name: /javascript/i
+        name: new RegExp(repository.language, "i")
     });
 
     const repoLink = screen.getByRole("link", {
@@ -35,6 +42,16 @@ test('should have github repository link', async () => {
 
     expect(repoLink).toHaveAttribute("href", repository.html_url);
 
+});
+
+test('should have dynamic icon based on the repository primary language', async () => {
+    const { repository } = renderComponent();
+
+    const icon = await screen.findByRole("img", {
+        name: new RegExp(repository.language, "i")
+    });
+
+    expect(icon).toHaveClass("js-icon");
 });
 
 // const pause = () => new Promise(resolve => setTimeout(resolve, 100));
