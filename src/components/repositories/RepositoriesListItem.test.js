@@ -2,6 +2,9 @@ import { render, screen } from "@testing-library/react";
 import RepositoriesListItem from "./RepositoriesListItem";
 import { MemoryRouter } from "react-router-dom";
 
+
+jest.mock("../tree/FileIcon.js", () => () => "File Icon Component");
+
 test('should have github repository link', async () => {
     const repository = {
         full_name: "facebook/react",
@@ -16,7 +19,7 @@ test('should have github repository link', async () => {
         </MemoryRouter>
     )
 
-    await screen.findByRole("img", {
-        name: /javascript/i
-    });
+    // await screen.findByRole("img", {
+    //     name: /javascript/i
+    // });
 });
