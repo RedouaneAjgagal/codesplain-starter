@@ -1,46 +1,32 @@
 import { screen, render } from "@testing-library/react";
-import { rest } from "msw";
-import { setupServer } from "msw/node";
 import HomeRoute from "./HomeRoute";
 import { MemoryRouter } from "react-router";
+import createServer from "../test/server";
 
-const handlers = [
-    rest.get("api/repositories", (req, res, ctx) => {
-        const query = req.url.searchParams.get("q");
+createServer([
+    {
+        path: "/api/repositories",
+        method: "get",
+        res: (req) => {
+            const query = req.url.searchParams.get("q");
 
-        const primaryLanguage = query.split("language:")[1];
-        console.log(primaryLanguage);
+            const language = query.split("language:")[1];
 
-        return res(
-            ctx.json({
+            return {
                 items: [
                     {
                         id: 1,
-                        full_name: `${primaryLanguage}_one`
+                        full_name: `${language}_one`
                     },
                     {
                         id: 2,
-                        full_name: `${primaryLanguage}_two`
+                        full_name: `${language}_two`
                     }
                 ]
-            })
-        )
-    })
-];
-
-const server = setupServer(...handlers);
-
-beforeAll(() => {
-    server.listen();
-});
-
-afterEach(() => {
-    server.resetHandlers();
-});
-
-afterAll(() => {
-    server.close();
-})
+            }
+        }
+    }
+]);
 
 test('should render two links for each language', async () => {
     render(
